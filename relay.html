@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><title>relay</title>
+<script>
+// 공개 그림을 부모 창(x.com 등)으로 넘겨 주는 중계 페이지. ?d=폴더&n=장수
+(async () => {
+  const q = new URLSearchParams(location.search), d = q.get('d'), n = +q.get('n') || 1;
+  try {
+    for (let i = 1; i <= n; i++) {
+      const name = String(i).padStart(2, '0') + '.jpg';
+      const b = await (await fetch(d + '/' + name)).blob();
+      parent.postMessage({ n: name, b }, '*');
+    }
+    parent.postMessage({ done: n }, '*');
+  } catch (e) { parent.postMessage({ err: String(e) }, '*'); }
+})();
+</script>
